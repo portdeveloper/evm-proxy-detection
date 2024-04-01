@@ -10,6 +10,22 @@ describe('detectProxyTarget -> eip1193 provider', () => {
   // TODO fix to a block number to keep test stable for eternity (requires Infura archive access)
   const BLOCK_TAG = 'latest' // 15573889
 
+  const numberOfRuns = 5
+
+  // test this one multiple times to ensure it's stable
+  // normally it gives out the correct address, but sometimes it gives out the wrong one
+  for (let i = 1; i <= numberOfRuns; i++) {
+    it(`detects EIP-1967 - Zora Labs: Contract Factory on run ${i}`, async () => {
+      expect(
+        await detectProxyTarget(
+          '0xF74B146ce44CC162b601deC3BE331784DB111DC1',
+          requestFunc,
+          BLOCK_TAG
+        )
+      ).toBe('0x932a29dbfc1b8c3bdfc763ef53f113486a5b5e7d')
+    })
+  }
+
   it('detects EIP-1967 direct proxies', async () => {
     expect(
       await detectProxyTarget(
@@ -58,6 +74,16 @@ describe('detectProxyTarget -> eip1193 provider', () => {
         BLOCK_TAG
       )
     ).toBe('0xe4e4003afe3765aca8149a82fc064c0b125b9e5a')
+  })
+
+  it('detects EIP-897 - NOUNS DAO', async () => {
+    expect(
+      await detectProxyTarget(
+        '0x6f3E6272A167e8AcCb32072d08E0957F9c79223d',
+        requestFunc,
+        BLOCK_TAG
+      )
+    ).toBe('0xe3caa436461dba00cfbe1749148c9fa7fa1f5344')
   })
 
   it('detects EIP-1167 minimal proxies', async () => {
